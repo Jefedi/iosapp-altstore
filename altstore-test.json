@@ -1,0 +1,47 @@
+{
+    "name": "Jefedi AltStore Source TEST",
+    "subtitle": "Source de test pour validation AltStore",
+    "description": "Source temporaire pour tester le fonctionnement d'AltStore avec un IPA d'exemple.",
+    "iconURL": "https://github.com/Jefedi/iosapp-altstore/raw/main/icon.png",
+    "website": "https://github.com/Jefedi/iosapp-altstore",
+    "tintColor": "#007AFF",
+    "apps": [
+        {
+            "name": "Test App - Jefedi",
+            "bundleIdentifier": "com.example.testapp",
+            "developerName": "Jefedi Test",
+            "subtitle": "App de test pour valider AltStore",
+            "localizedDescription": "Cette application est un test pour valider que votre configuration AltStore fonctionne correctement. Une fois que cette app s'installe, nous pourrons configurer votre vraie app.",
+            "iconURL": "https://github.com/Jefedi/iosapp-altstore/raw/main/icon.png",
+            "tintColor": "#007AFF",
+            "category": "utilities",
+            "screenshots": [],
+            "versions": [
+                {
+                    "version": "1.0",
+                    "buildVersion": "1",
+                    "date": "2025-09-28",
+                    "localizedDescription": "Version de test pour validation AltStore",
+                    "downloadURL": "https://github.com/rileytestut/Delta/releases/download/v1.6/Delta-1.6.ipa",
+                    "size": 52428800,
+                    "minOSVersion": "14.0"
+                }
+            ],
+            "appPermissions": {
+                "entitlements": [],
+                "privacy": {}
+            }
+        }
+    ],
+    "news": [
+        {
+            "title": "Test de configuration AltStore",
+            "identifier": "test-config-jefedi",
+            "caption": "Validation du setup AltStore",
+            "date": "2025-09-28",
+            "tintColor": "#007AFF",
+            "notify": false,
+            "appID": "com.example.testapp"
+        }
+    ]
+}
