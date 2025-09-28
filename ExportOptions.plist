@@ -20,7 +20,7 @@
     <string>export</string>
     <key>provisioningProfiles</key>
     <dict>
-        <key>com.yourname.altstoreapp</key>
+        <key>com.jefedi.altstoreapp</key>
         <string></string>
     </dict>
 </dict>
