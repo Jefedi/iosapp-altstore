@@ -33,21 +33,34 @@ jobs:
                    archive \
                    CODE_SIGN_IDENTITY="" \
                    CODE_SIGNING_REQUIRED=NO \
-                   CODE_SIGNING_ALLOWED=NO
+                   CODE_SIGNING_ALLOWED=NO \
+                   DEVELOPMENT_TEAM=""
                    
-    - name: Export IPA (Development)
+    - name: Create IPA Manually
       run: |
         set -eo pipefail
-        xcodebuild -exportArchive \
-                   -archivePath $PWD/build/JAPP.xcarchive \
-                   -exportOptionsPlist ExportOptionsDev.plist \
-                   -exportPath $PWD/build \
-                   -allowProvisioningUpdates
+        
+        # Créer le dossier de payload
+        mkdir -p build/Payload
+        
+        # Copier l'app depuis l'archive
+        cp -r build/JAPP.xcarchive/Products/Applications/JAPP.app build/Payload/
+        
+        # Créer l'IPA en zippant le dossier Payload
+        cd build
+        zip -r JAPP.ipa Payload/
+        
+        # Vérifier que l'IPA a été créé
+        ls -la JAPP.ipa
                    
     - name: Create Release Directory
       run: |
         mkdir -p release
-        find build -name "*.ipa" -exec cp {} release/JAPP.ipa \;
+        cp build/JAPP.ipa release/JAPP.ipa
+        cp INSTALL_GUIDE.md release/
+        
+        # Vérifier que les fichiers sont dans le dossier release
+        ls -la release/
         
     - name: Generate App Info
       run: |
@@ -90,5 +103,6 @@ jobs:
           - Version: ${{ github.ref_name }}
         files: |
           release/JAPP.ipa
+          release/INSTALL_GUIDE.md
         draft: false
         prerelease: false
