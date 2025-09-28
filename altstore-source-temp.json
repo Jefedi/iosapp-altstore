@@ -22,7 +22,7 @@
                     "buildVersion": "1",
                     "date": "2025-09-28",
                     "localizedDescription": "Version initiale avec compteur interactif creee par Jefedi",
-                    "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/latest/download/AltStoreApp.ipa",
+                    "downloadURL": "https://github.com/Jefedi/iosapp-altstore/raw/main/AltStoreApp.ipa",
                     "size": 5242880,
                     "minOSVersion": "17.0"
                 }
