@@ -22,22 +22,6 @@ jobs:
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
-        
-    - name: Install Apple Certificate
-      uses: apple-actions/import-codesign-certs@v2
-      with:
-        p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-        p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
-      continue-on-error: true
-      
-    - name: Install Provisioning Profile
-      uses: apple-actions/download-provisioning-profiles@v1
-      with:
-        bundle-id: com.jefedi.japp
-        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-        api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
-        api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
-      continue-on-error: true
       
     - name: Build Archive
       run: |
@@ -46,19 +30,12 @@ jobs:
                    -scheme JAPP \
                    -destination generic/platform=iOS \
                    -archivePath $PWD/build/JAPP.xcarchive \
-                   archive | xcpretty
+                   archive \
+                   CODE_SIGN_IDENTITY="" \
+                   CODE_SIGNING_REQUIRED=NO \
+                   CODE_SIGNING_ALLOWED=NO
                    
-    - name: Export IPA (Ad-Hoc)
-      run: |
-        set -eo pipefail
-        xcodebuild -exportArchive \
-                   -archivePath $PWD/build/JAPP.xcarchive \
-                   -exportOptionsPlist ExportOptions.plist \
-                   -exportPath $PWD/build \
-                   -allowProvisioningUpdates
-                   
-    - name: Export IPA (Development - Fallback)
-      if: failure()
+    - name: Export IPA (Development)
       run: |
         set -eo pipefail
         xcodebuild -exportArchive \
@@ -66,7 +43,6 @@ jobs:
                    -exportOptionsPlist ExportOptionsDev.plist \
                    -exportPath $PWD/build \
                    -allowProvisioningUpdates
-      continue-on-error: true
                    
     - name: Create Release Directory
       run: |
