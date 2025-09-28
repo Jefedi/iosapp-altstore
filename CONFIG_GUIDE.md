@@ -64,14 +64,69 @@ git push
 | `urls.ipaDownload` | Lien de téléchargement | GitHub releases |
 | `descriptions.long` | Description complète | Texte avec fonctionnalités |
 
+## 🚀 Création de Release Automatique
+
+### Option 1: Release Complète (Recommandée)
+
+```powershell
+.\release.ps1 -Version "1.0.5" -IpaPath "chemin\vers\JAPP.ipa"
+```
+
+Cette commande fait **TOUT AUTOMATIQUEMENT** :
+- ✅ Met à jour `config.json`
+- ✅ Met à jour `manifest.json` 
+- ✅ Met à jour `altstore-source.json`
+- ✅ Met à jour le projet Xcode
+- ✅ Commit les changements
+- ✅ Crée la release GitHub avec l'IPA
+- ✅ Push tout sur GitHub
+
+### Option 2: Release Seulement
+
+Si vous avez déjà mis à jour les fichiers :
+
+```powershell
+.\create-release.ps1 -IpaPath "chemin\vers\JAPP.ipa"
+```
+
+### 🧪 Pre-Release
+
+Pour créer une pre-release/beta :
+
+```powershell
+.\release.ps1 -Version "1.1.0-beta1" -IpaPath "chemin\vers\JAPP.ipa" -PreRelease
+```
+
+## 🔧 Prérequis
+
+1. **GitHub CLI** installé :
+   ```powershell
+   winget install GitHub.cli
+   gh auth login
+   ```
+
+2. **Git** configuré et repository cloné
+
+## 🔄 Workflow Recommandé
+
+1. **Développement** dans Xcode
+2. **Build et Export** de l'IPA  
+3. **Release automatique** :
+   ```powershell
+   .\release.ps1 -Version "1.0.5" -IpaPath "builds\JAPP.ipa"
+   ```
+4. **C'est tout !** 🎉
+
 ## 🚀 Création de Release
 
 1. **Compilez l'IPA** dans Xcode
-2. **Créez la release** sur GitHub :
-   - Tag : `v1.0.4`
-   - Title : Tiré de `config.json`
-   - Upload de l'IPA
-3. **Les URLs se mettront à jour automatiquement**
+2. **Lancez le script** :
+   ```powershell
+   .\release.ps1 -Version "NOUVELLE_VERSION" -IpaPath "chemin\vers\JAPP.ipa"
+   ```
+3. **Vérifiez** sur GitHub que tout est OK
+
+Le script se charge de tout automatiquement !
 
 ## ✨ Avantages
 

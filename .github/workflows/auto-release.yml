@@ -1,0 +1,425 @@
+name: 🚀 Auto Release & Deploy
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'config.json'
+      - 'JAPP/**'
+      - 'JAPP.xcodeproj/**'
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Force build even without version change'
+        required: false
+        default: 'false'
+
+jobs:
+  detect-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      version-changed: ${{ steps.check-version.outputs.changed }}
+      build-needed: ${{ steps.check-version.outputs.build-needed }}
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    - name: 📖 Get Current Version
+      id: get-version
+      run: |
+        VERSION=$(cat config.json | jq -r '.app.version')
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "📱 Current version: $VERSION"
+
+    - name: 🔍 Check Version Change
+      id: check-version
+      run: |
+        VERSION="${{ steps.get-version.outputs.version }}"
+        
+        # Check if this tag already exists
+        if git tag -l "v$VERSION" | grep -q "v$VERSION"; then
+          echo "⚠️ Tag v$VERSION already exists"
+          CHANGED="false"
+          BUILD_NEEDED="false"
+        else
+          # Check if config.json was modified in this push
+          if git diff HEAD~1 HEAD --name-only | grep -q "config.json"; then
+            echo "✅ config.json was modified and version is new"
+            CHANGED="true"
+            BUILD_NEEDED="true"
+          elif [ "${{ github.event.inputs.force_build }}" == "true" ]; then
+            echo "🔄 Force build requested"
+            CHANGED="true"  
+            BUILD_NEEDED="true"
+          else
+            echo "ℹ️ No version change detected"
+            CHANGED="false"
+            BUILD_NEEDED="false"
+          fi
+        fi
+        
+        echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+        echo "build-needed=$BUILD_NEEDED" >> $GITHUB_OUTPUT
+
+  build-ios:
+    runs-on: macos-latest
+    needs: detect-version
+    if: needs.detect-version.outputs.build-needed == 'true'
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🍎 Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+
+    - name: 📖 Load Configuration
+      id: config
+      run: |
+        APP_NAME=$(cat config.json | jq -r '.app.name')
+        VERSION=$(cat config.json | jq -r '.app.version')
+        BUNDLE_ID=$(cat config.json | jq -r '.app.bundleId')
+        
+        echo "app-name=$APP_NAME" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT  
+        echo "bundle-id=$BUNDLE_ID" >> $GITHUB_OUTPUT
+
+    - name: 🔧 Update Xcode Project Version
+      run: |
+        VERSION="${{ steps.config.outputs.version }}"
+        
+        # Update MARKETING_VERSION in project.pbxproj
+        sed -i '' "s/MARKETING_VERSION = [^;]*/MARKETING_VERSION = $VERSION/g" JAPP.xcodeproj/project.pbxproj
+        
+        echo "✅ Updated Xcode project to version $VERSION"
+
+    - name: 📦 Build Archive
+      run: |
+        xcodebuild -project JAPP.xcodeproj \
+          -scheme JAPP \
+          -configuration Release \
+          -archivePath build/JAPP.xcarchive \
+          -sdk iphoneos \
+          -allowProvisioningUpdates \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGN_ENTITLEMENTS="" \
+          CODE_SIGNING_ALLOWED=NO \
+          archive
+
+    - name: 📱 Export IPA
+      run: |
+        # Create export options plist
+        cat > export_options.plist << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>development</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>compileBitcode</key>
+            <false/>
+            <key>destination</key>
+            <string>export</string>
+            <key>generateAppStoreInformation</key>
+            <false/>
+            <key>installerSigningCertificate</key>
+            <string>-</string>
+        </dict>
+        </plist>
+        EOF
+
+        xcodebuild -exportArchive \
+          -archivePath build/JAPP.xcarchive \
+          -exportPath build/ \
+          -exportOptionsPlist export_options.plist \
+          -allowProvisioningUpdates
+
+    - name: 🔍 Find IPA File
+      id: find-ipa
+      run: |
+        IPA_PATH=$(find build -name "*.ipa" | head -1)
+        if [ -z "$IPA_PATH" ]; then
+          echo "❌ No IPA file found"
+          exit 1
+        fi
+        
+        echo "ipa-path=$IPA_PATH" >> $GITHUB_OUTPUT
+        echo "ipa-name=$(basename $IPA_PATH)" >> $GITHUB_OUTPUT
+        
+        # Get file size
+        SIZE=$(stat -f%z "$IPA_PATH")
+        echo "ipa-size=$SIZE" >> $GITHUB_OUTPUT
+        
+        echo "✅ Found IPA: $IPA_PATH ($(( SIZE / 1024 / 1024 )) MB)"
+
+    - name: 📤 Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: JAPP-${{ steps.config.outputs.version }}-IPA
+        path: ${{ steps.find-ipa.outputs.ipa-path }}
+        retention-days: 30
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [detect-version, build-ios]
+    if: always() && needs.detect-version.outputs.build-needed == 'true' && needs.build-ios.result == 'success'
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 📖 Load Configuration
+      id: config
+      run: |
+        APP_NAME=$(cat config.json | jq -r '.app.name')
+        VERSION=$(cat config.json | jq -r '.app.version')
+        DISPLAY_NAME=$(cat config.json | jq -r '.app.displayName')
+        VERSION_DESC=$(cat config.json | jq -r '.descriptions.version')
+        LONG_DESC=$(cat config.json | jq -r '.descriptions.long')
+        DEVELOPER=$(cat config.json | jq -r '.app.developer')
+        
+        echo "app-name=$APP_NAME" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "display-name=$DISPLAY_NAME" >> $GITHUB_OUTPUT
+        
+        # Escape multiline strings for GitHub Actions
+        {
+          echo "version-desc<<EOF"
+          echo "$VERSION_DESC"
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
+        
+        {
+          echo "long-desc<<EOF" 
+          echo "$LONG_DESC"
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
+
+    - name: 📥 Download IPA Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: JAPP-${{ steps.config.outputs.version }}-IPA
+        path: ./artifacts/
+
+    - name: 🏷️ Create Release Notes
+      id: release-notes
+      run: |
+        VERSION="${{ steps.config.outputs.version }}"
+        DISPLAY_NAME="${{ steps.config.outputs.display-name }}"
+        
+        cat > release_notes.md << EOF
+        # $DISPLAY_NAME - Version $VERSION
+        
+        ${{ steps.config.outputs.version-desc }}
+        
+        ## 📦 Installation
+        
+        ### Via AltStore Source
+        1. Ajoutez la source dans AltStore :
+           \`\`\`
+           https://raw.githubusercontent.com/${{ github.repository }}/main/altstore-source.json
+           \`\`\`
+        2. Installez ${{ steps.config.outputs.app-name }} depuis l'onglet Browse
+        
+        ### Installation directe
+        1. Téléchargez le fichier IPA ci-dessous
+        2. Installez avec AltStore, Sideloadly ou tout autre outil de sideloading
+        
+        ## 📱 Caractéristiques
+        - **Version** : $VERSION
+        - **iOS minimum** : 17.0+
+        - **Bundle ID** : $(cat config.json | jq -r '.app.bundleId')
+        
+        ## 🔗 Liens utiles
+        - [Page web du projet]($(cat config.json | jq -r '.urls.website'))
+        - [Code source](https://github.com/${{ github.repository }})
+        - [Source AltStore](https://raw.githubusercontent.com/${{ github.repository }}/main/altstore-source.json)
+        
+        ---
+        Développé par ${{ steps.config.outputs.display-name }} avec ❤️
+        EOF
+
+    - name: 🚀 Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.config.outputs.version }}
+        name: ${{ steps.config.outputs.display-name }} v${{ steps.config.outputs.version }}
+        body_path: release_notes.md
+        files: ./artifacts/*.ipa
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-configs:
+    runs-on: ubuntu-latest
+    needs: [detect-version, create-release]
+    if: always() && needs.create-release.result == 'success'
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 📖 Load Configuration & Update Date
+      run: |
+        # Update release date to current date
+        CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        
+        # Update config.json with new date
+        jq --arg date "$CURRENT_DATE" '.release.date = $date' config.json > config.json.tmp
+        mv config.json.tmp config.json
+
+    - name: 🔄 Update JSON Files
+      run: |
+        # Read config
+        APP_NAME=$(cat config.json | jq -r '.app.name')
+        VERSION=$(cat config.json | jq -r '.app.version')
+        BUNDLE_ID=$(cat config.json | jq -r '.app.bundleId')
+        DEVELOPER=$(cat config.json | jq -r '.app.developer')
+        SUBTITLE=$(cat config.json | jq -r '.app.subtitle')
+        VERSION_DATE=$(cat config.json | jq -r '.release.date')
+        VERSION_DESC=$(cat config.json | jq -r '.descriptions.versionInitial')
+        LONG_DESC=$(cat config.json | jq -r '.descriptions.long')
+        ICON_URL=$(cat config.json | jq -r '.urls.icon')
+        TINT_COLOR=$(cat config.json | jq -r '.app.tintColor')
+        SIZE=$(cat config.json | jq -r '.app.size')
+        IPA_URL=$(cat config.json | jq -r '.urls.ipaDownload')
+        SCREENSHOT1=$(cat config.json | jq -r '.urls.screenshots.screenshot1')
+        SCREENSHOT2=$(cat config.json | jq -r '.urls.screenshots.screenshot2')
+        SCREENSHOT3=$(cat config.json | jq -r '.urls.screenshots.screenshot3')
+        VERSION_FULL_DESC=$(cat config.json | jq -r '.descriptions.version')
+        NEWS_TITLE=$(cat config.json | jq -r '.release.title')
+        NEWS_CAPTION=$(cat config.json | jq -r '.release.caption')
+        PATREON=$(cat config.json | jq -r '.social.patreon')
+        DISCORD=$(cat config.json | jq -r '.social.discord')
+        TWITTER=$(cat config.json | jq -r '.social.twitter')
+        
+        # Update manifest.json
+        cat > manifest.json << EOF
+        {
+          "name": "$APP_NAME",
+          "bundleIdentifier": "$BUNDLE_ID",
+          "developerName": "$DEVELOPER",
+          "subtitle": "$SUBTITLE",
+          "version": "$VERSION",
+          "versionDate": "$VERSION_DATE",
+          "versionDescription": "$VERSION_DESC",
+          "downloadURL": "$IPA_URL",
+          "localizedDescription": "$LONG_DESC",
+          "iconURL": "$ICON_URL",
+          "tintColor": "$TINT_COLOR",
+          "size": $SIZE,
+          "screenshotURLs": [
+            "$SCREENSHOT1",
+            "$SCREENSHOT2"
+          ],
+          "permissions": [
+            {
+              "type": "background-fetch",
+              "usageDescription": "Pas de permissions spéciales requises."
+            }
+          ],
+          "appPermissions": {
+            "entitlements": [
+              {
+                "name": "com.apple.security.app-sandbox"
+              }
+            ],
+            "privacy": {}
+          }
+        }
+        EOF
+        
+        # Update altstore-source.json
+        cat > altstore-source.json << EOF
+        {
+          "name": "$APP_NAME Store",
+          "identifier": "$BUNDLE_ID.source",
+          "sourceURL": "https://raw.githubusercontent.com/${{ github.repository }}/main/altstore-source.json",
+          "apps": [
+            {
+              "name": "$APP_NAME",
+              "bundleIdentifier": "$BUNDLE_ID",
+              "developerName": "$DEVELOPER",
+              "subtitle": "$SUBTITLE",
+              "version": "$VERSION",
+              "versionDate": "$VERSION_DATE",
+              "versionDescription": "$VERSION_FULL_DESC",
+              "downloadURL": "$IPA_URL",
+              "localizedDescription": "$LONG_DESC",
+              "iconURL": "$ICON_URL",
+              "tintColor": "$TINT_COLOR",
+              "size": $SIZE,
+              "beta": false,
+              "screenshots": [
+                "$SCREENSHOT1",
+                "$SCREENSHOT2",
+                "$SCREENSHOT3"
+              ],
+              "permissions": [
+                {
+                  "type": "none",
+                  "usageDescription": "$APP_NAME ne nécessite aucune permission spéciale pour fonctionner."
+                }
+              ],
+              "appPermissions": {}
+            }
+          ],
+          "news": [
+            {
+              "title": "$NEWS_TITLE",
+              "identifier": "$(echo $APP_NAME | tr '[:upper:]' '[:lower:]')-v$VERSION-release",
+              "caption": "$NEWS_CAPTION",
+              "tintColor": "$TINT_COLOR",
+              "date": "$VERSION_DATE",
+              "notify": false,
+              "url": "https://github.com/${{ github.repository }}/releases/tag/v$VERSION"
+            }
+          ],
+          "userInfo": {
+            "patreonURL": "$PATREON",
+            "discordURL": "$DISCORD",
+            "twitterURL": "$TWITTER"
+          }
+        }
+        EOF
+
+    - name: 📤 Commit Updated Files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        git add config.json manifest.json altstore-source.json
+        
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "🤖 Auto-update configs for v${{ needs.detect-version.outputs.version }}
+          
+          - Updated release date
+          - Regenerated manifest.json  
+          - Regenerated altstore-source.json
+          - Synchronized all URLs and metadata"
+          
+          git push
+        fi
+
+    - name: ✅ Workflow Complete
+      run: |
+        echo "🎉 Deployment complete!"
+        echo "📱 Version: v${{ needs.detect-version.outputs.version }}"
+        echo "🔗 Release: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.detect-version.outputs.version }}"
+        echo "🏪 AltStore: The app will be available in AltStore within minutes"
