@@ -4,16 +4,16 @@
   "developerName": "Jefedi",
   "subtitle": "Compteur Simple et Élégant",
   "version": "1.0.4",
-  "versionDate": "2025-09-28T00:00:00Z",
+  "versionDate": "2025-09-28T21:00:00Z",
   "versionDescription": "Version initiale de JAPP avec compteur interactif",
   "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa",
-  "localizedDescription": "JAPP est une application de compteur simple et élégante avec une interface moderne SwiftUI.\n\n✨ Fonctionnalités:\n• Compteur avec boutons + et -\n• Bouton Reset pour remettre à zéro\n• Interface moderne avec animations fluides\n• Support mode sombre et clair\n• Design minimaliste et intuitif\n\n🎯 Parfait pour:\n• Compter n'importe quoi\n• Interface simple et rapide\n• Utilisation quotidienne\n\n📱 Compatible iOS 17.0+",
+  "localizedDescription": "JAPP est une application de compteur simple et élégante avec une interface moderne SwiftUI.\n\n✨ Fonctionnalités principales :\n• Compteur avec boutons + et - intuitifs\n• Bouton Reset pour remettre à zéro\n• Interface moderne avec animations fluides\n• Support automatique du mode sombre et clair\n• Design minimaliste et épuré\n• Compatible iPhone et iPad\n\n🎯 Parfait pour :\n• Compter n'importe quoi au quotidien\n• Interface simple et rapide à utiliser\n• Utilisation fréquente sans complexité\n\n📱 Caractéristiques techniques :\n• Compatible iOS 17.0+ et plus récent\n• Taille optimisée (~2MB)\n• Aucune permission spéciale requise\n• Interface SwiftUI native\n• Performance optimale sur tous les appareils\n\nUne application utile pour tous vos besoins de comptage quotidien !",
   "iconURL": "https://github.com/Jefedi/iosapp-altstore/raw/main/assets/icon-1024.png",
   "tintColor": "#007AFF",
-  "size": 2048000,
+  "size": 2097152,
   "screenshotURLs": [
-    "https://github.com/Jefedi/iosapp-altstore/raw/main/assets/screenshot1.png",
-    "https://github.com/Jefedi/iosapp-altstore/raw/main/assets/screenshot2.png"
+    "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/assets/screenshot1.png",
+    "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/assets/screenshot2.png"
   ],
   "permissions": [
     {
