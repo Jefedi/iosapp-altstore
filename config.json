@@ -5,7 +5,7 @@
     "subtitle": "Compteur Simple et Élégant",
     "bundleId": "com.jefedi.japp",
     "developer": "Jefedi",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "buildNumber": "1",
     "iosMinVersion": "17.0",
     "size": 2097152,
@@ -37,8 +37,8 @@
     "versionInitial": "Version initiale de JAPP avec compteur interactif"
   },
   "release": {
-    "date": "2025-09-29T16:45:00Z",
-    "title": "JAPP v1.0.6 Disponible !",
+    "date": "2025-09-29T17:30:00Z",
+    "title": "JAPP v1.0.7 Disponible !",
     "caption": "Compteur simple et élégant - Version stable disponible maintenant !",
     "prerelease": false
   },
