@@ -1,0 +1,51 @@
+{
+    "name": "Ma Source AltStore",
+    "identifier": "com.yourname.altstore.source",
+    "sourceURL": "https://votre-site.com/altstore-source.json",
+    "apps": [
+        {
+            "name": "Mon App AltStore",
+            "bundleIdentifier": "com.yourname.altstoreapp",
+            "developerName": "Votre Nom",
+            "subtitle": "Une app de démonstration",
+            "version": "1.0",
+            "versionDate": "2025-09-28T10:00:00-07:00",
+            "versionDescription": "Version initiale avec compteur interactif",
+            "downloadURL": "https://votre-site.com/releases/AltStoreApp-v1.0.ipa",
+            "localizedDescription": "Cette application iOS a été créée spécialement pour être distribuée via AltStore. Elle inclut:\n\n• Interface utilisateur moderne en SwiftUI\n• Compteur interactif avec boutons +/- et reset\n• Design adaptatif pour iPhone et iPad\n• Compatibilité iOS 17+\n• Code source complet inclus\n\nParfaite comme point de départ pour vos propres applications iOS distribuées via AltStore.",
+            "iconURL": "https://votre-site.com/icons/altstoreapp-icon.png",
+            "tintColor": "007AFF",
+            "size": 5242880,
+            "beta": false,
+            "screenshotURLs": [
+                "https://votre-site.com/screenshots/main-screen.png",
+                "https://votre-site.com/screenshots/counter-demo.png"
+            ],
+            "permissions": [
+                {
+                    "type": "background-processing",
+                    "usageDescription": "Permet à l'app de fonctionner en arrière-plan si nécessaire."
+                }
+            ],
+            "appPermissions": {
+                "entitlements": []
+            }
+        }
+    ],
+    "news": [
+        {
+            "title": "Première release !",
+            "identifier": "first-release",
+            "caption": "Version 1.0 disponible",
+            "date": "2025-09-28T10:00:00-07:00",
+            "tintColor": "007AFF",
+            "imageURL": "https://votre-site.com/news/release-banner.png",
+            "notify": true,
+            "url": "https://votre-site.com/news/first-release"
+        }
+    ],
+    "userInfo": {
+        "patreonURL": "https://patreon.com/votre-compte",
+        "twitterURL": "https://twitter.com/votre-compte"
+    }
+}

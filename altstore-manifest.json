@@ -1,0 +1,31 @@
+{
+    "name": "Mon App AltStore",
+    "bundleIdentifier": "com.yourname.altstoreapp",
+    "developerName": "Votre Nom",
+    "version": "1.0",
+    "versionDate": "2025-09-28T10:00:00-07:00",
+    "versionDescription": "Version initiale de l'application",
+    "downloadURL": "https://votre-site.com/releases/AltStoreApp.ipa",
+    "localizedDescription": "Une application iOS créée pour être distribuée via AltStore. Cette app démontre les fonctionnalités de base et peut servir de template pour vos propres applications.",
+    "iconURL": "https://votre-site.com/images/icon.png",
+    "tintColor": "007AFF",
+    "size": 5242880,
+    "screenshotURLs": [
+        "https://votre-site.com/screenshots/screenshot1.png",
+        "https://votre-site.com/screenshots/screenshot2.png"
+    ],
+    "permissions": [
+        {
+            "type": "background-audio",
+            "usageDescription": "Cette app peut jouer de l'audio en arrière-plan."
+        }
+    ],
+    "appPermissions": {
+        "entitlements": [
+            {
+                "name": "com.apple.security.application-groups",
+                "value": ["group.com.yourname.altstoreapp"]
+            }
+        ]
+    }
+}

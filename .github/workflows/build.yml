@@ -1,0 +1,100 @@
+name: Build iOS App for AltStore
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Export IPA
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+        
+    - name: Cache Xcode Build
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/Library/Developer/Xcode/DerivedData
+          build
+        key: ${{ runner.os }}-xcode-${{ hashFiles('**/*.xcodeproj') }}
+        restore-keys: |
+          ${{ runner.os }}-xcode-
+          
+    - name: Install Dependencies
+      run: |
+        # Si vous avez des dépendances CocoaPods ou SPM
+        # pod install --repo-update
+        echo "No dependencies to install"
+        
+    - name: Build Archive
+      run: |
+        xcodebuild -project AltStoreApp.xcodeproj \
+                   -scheme AltStoreApp \
+                   -configuration Release \
+                   -archivePath build/AltStoreApp.xcarchive \
+                   -destination "generic/platform=iOS" \
+                   DEVELOPMENT_TEAM="" \
+                   CODE_SIGN_IDENTITY="" \
+                   CODE_SIGNING_REQUIRED=NO \
+                   CODE_SIGNING_ALLOWED=NO \
+                   archive
+                   
+    - name: Export IPA
+      run: |
+        xcodebuild -exportArchive \
+                   -archivePath build/AltStoreApp.xcarchive \
+                   -exportPath build/ \
+                   -exportOptionsPlist ExportOptions.plist
+                   
+    - name: Verify IPA
+      run: |
+        if [ -f "build/AltStoreApp.ipa" ]; then
+          echo "✅ IPA created successfully"
+          ls -la build/AltStoreApp.ipa
+        else
+          echo "❌ IPA not found"
+          exit 1
+        fi
+        
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: AltStoreApp-${{ github.sha }}
+        path: build/AltStoreApp.ipa
+        retention-days: 30
+        
+    - name: Upload to Release (Tags only)
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          build/AltStoreApp.ipa
+          altstore-source.json
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Update Manifest
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        # Mettre à jour les URLs dans le manifeste avec les vraies URLs de release
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/AltStoreApp.ipa"
+        
+        # Remplacer l'URL temporaire par la vraie URL
+        sed -i '' "s|https://votre-site.com/releases/AltStoreApp.ipa|$RELEASE_URL|g" altstore-source.json
+        
+        echo "✅ Manifest updated with release URL: $RELEASE_URL"
