@@ -6,6 +6,7 @@
         {
             "name": "Jefedi AltStore App",
             "bundleIdentifier": "com.jefedi.altstoreapp",
+            "marketplaceID": "com.jefedi.altstoreapp",
             "developerName": "Jefedi",
             "subtitle": "Une app de demonstration by Jefedi",
             "version": "1.0",
@@ -46,6 +47,7 @@
     ],
     "userInfo": {
         "githubURL": "https://github.com/Jefedi",
-        "websiteURL": "https://github.com/Jefedi/iosapp-altstore"
+        "websiteURL": "https://github.com/Jefedi/iosapp-altstore",
+        "patreonURL": ""
     }
 }
