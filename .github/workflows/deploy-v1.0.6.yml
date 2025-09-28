@@ -1,0 +1,117 @@
+name: 🚀 Deploy JAPP v1.0.6
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_build:
+        description: 'Skip iOS build (use existing artifacts)'
+        required: false
+        default: false
+        type: boolean
+      force_release:
+        description: 'Force create release (delete existing if needed)'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  TARGET_VERSION: "1.0.6"
+
+jobs:
+  deploy-v106:
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy v1.0.6
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🔍 Verify Version
+      run: |
+        CURRENT_VERSION=$(cat config.json | jq -r '.app.version')
+        echo "📋 Config version: $CURRENT_VERSION"
+        echo "🎯 Target version: ${{ env.TARGET_VERSION }}"
+        
+        if [ "$CURRENT_VERSION" != "${{ env.TARGET_VERSION }}" ]; then
+          echo "⚠️ Version mismatch! Updating config.json..."
+          jq --arg version "${{ env.TARGET_VERSION }}" '.app.version = $version' config.json > config.json.tmp
+          mv config.json.tmp config.json
+          
+          # Update release date
+          CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          jq --arg date "$CURRENT_DATE" '.release.date = $date' config.json > config.json.tmp
+          mv config.json.tmp config.json
+          
+          # Update release title
+          jq --arg title "JAPP v${{ env.TARGET_VERSION }} Disponible !" '.release.title = $title' config.json > config.json.tmp
+          mv config.json.tmp config.json
+          
+          echo "✅ Config updated to v${{ env.TARGET_VERSION }}"
+        else
+          echo "✅ Version already correct"
+        fi
+
+    - name: 🏷️ Create/Update Tag
+      run: |
+        # Delete existing tag if it exists
+        if git tag -l "v${{ env.TARGET_VERSION }}" | grep -q "v${{ env.TARGET_VERSION }}"; then
+          echo "🗑️ Deleting existing tag v${{ env.TARGET_VERSION }}"
+          git tag -d "v${{ env.TARGET_VERSION }}" || true
+          git push --delete origin "v${{ env.TARGET_VERSION }}" || true
+        fi
+        
+        # Create new tag
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action Deploy"
+        git add config.json || true
+        git commit -m "🚀 Deploy v${{ env.TARGET_VERSION }}" || echo "No changes to commit"
+        git tag -a "v${{ env.TARGET_VERSION }}" -m "Release JAPP v${{ env.TARGET_VERSION }} - Deployment"
+        git push origin main || true
+        git push origin "v${{ env.TARGET_VERSION }}"
+
+    - name: 🔄 Trigger Auto Release Workflow
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const response = await github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'auto-release.yml',
+            ref: 'main'
+          });
+          
+          console.log('🚀 Auto-release workflow triggered!');
+          console.log('📊 Check status at: https://github.com/${{ github.repository }}/actions');
+
+    - name: ⏱️ Wait for Workflow
+      run: |
+        echo "⏳ Waiting 30 seconds for workflow to start..."
+        sleep 30
+        
+        echo "📊 Workflow triggered! Check progress at:"
+        echo "🔗 https://github.com/${{ github.repository }}/actions"
+        echo "📱 Release will be available at:"
+        echo "🔗 https://github.com/${{ github.repository }}/releases/tag/v${{ env.TARGET_VERSION }}"
+        
+    - name: 📋 Deployment Summary
+      run: |
+        echo "## 🎉 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 App Details" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: v${{ env.TARGET_VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Bundle ID**: $(cat config.json | jq -r '.app.bundleId')" >> $GITHUB_STEP_SUMMARY
+        echo "- **Developer**: $(cat config.json | jq -r '.app.developer')" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔗 Links" >> $GITHUB_STEP_SUMMARY
+        echo "- [📊 Actions Workflow](https://github.com/${{ github.repository }}/actions)" >> $GITHUB_STEP_SUMMARY
+        echo "- [🏷️ Release Page](https://github.com/${{ github.repository }}/releases/tag/v${{ env.TARGET_VERSION }})" >> $GITHUB_STEP_SUMMARY
+        echo "- [📥 Download IPA](https://github.com/${{ github.repository }}/releases/latest/download/JAPP.ipa)" >> $GITHUB_STEP_SUMMARY
+        echo "- [🏪 AltStore Source]($(cat config.json | jq -r '.urls.altstoreSource'))" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 Installation" >> $GITHUB_STEP_SUMMARY
+        echo "1. Add AltStore source: \`$(cat config.json | jq -r '.urls.altstoreSource')\`" >> $GITHUB_STEP_SUMMARY
+        echo "2. Install JAPP v${{ env.TARGET_VERSION }} from AltStore" >> $GITHUB_STEP_SUMMARY
+        echo "3. Enjoy your simple counter app! ✨" >> $GITHUB_STEP_SUMMARY

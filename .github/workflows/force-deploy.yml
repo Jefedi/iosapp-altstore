@@ -1,4 +1,4 @@
-name: 🔄 Force Deploy v1.0.5
+name: 🔄 Force Deploy v1.0.6
 
 on:
   workflow_dispatch:
