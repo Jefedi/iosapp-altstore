@@ -9,7 +9,6 @@
         {
             "name": "Jefedi AltStore App",
             "bundleIdentifier": "com.jefedi.altstoreapp",
-            "marketplaceID": "com.jefedi.altstoreapp",
             "developerName": "Jefedi",
             "subtitle": "Une app de demonstration avec compteur interactif",
             "localizedDescription": "Cette application iOS a ete creee par Jefedi specialement pour etre distribuee via AltStore. Elle inclut une interface utilisateur moderne en SwiftUI avec un compteur interactif. Vous pouvez incrementer, decrementer et remettre a zero le compteur. Design adaptatif pour iPhone et iPad, compatible iOS 17+.",
