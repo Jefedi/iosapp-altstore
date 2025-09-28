@@ -1,116 +1,165 @@
-# AltStore App iOS - Par Jefedi 📱
+# 📱 JAPP - Compteur Simple pour iOS
 
-Une application iOS créée spécialement pour être distribuée via **AltStore**. Cette app de démonstration inclut un compteur interactif développé en SwiftUI avec automatisation GitHub Actions.
+<p align="center">
+  <img src="assets/icon.png" width="120" height="120" alt="JAPP Icon">
+</p>
 
-## 🎯 Fonctionnalités
+<p align="center">
+  <strong>Une application de compteur simple et élégante pour iOS</strong>
+</p>
 
-- ✅ **Interface SwiftUI moderne** avec compteur interactif
-- ✅ **Boutons +/-** pour incrémenter/décrémenter 
-- ✅ **Bouton Reset** pour remettre à zéro
-- ✅ **GitHub Actions** pour builds automatiques
-- ✅ **Distribution AltStore** prête à l'emploi
-- ✅ **Compatible iOS 17+** et architectures modernes
+<p align="center">
+  <a href="https://github.com/Jefedi/iosapp-altstore/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Jefedi/iosapp-altstore?style=for-the-badge&color=007AFF" alt="Latest Release">
+  </a>
+  <a href="https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa">
+    <img src="https://img.shields.io/badge/Download-IPA-blue?style=for-the-badge" alt="Download IPA">
+  </a>
+  <img src="https://img.shields.io/badge/iOS-17.0+-green?style=for-the-badge" alt="iOS Version">
+</p>
 
-## 🚀 Installation via AltStore
+## ✨ Fonctionnalités
+
+- **➕ Compteur interactif** : Boutons + et - avec animations fluides
+- **🔄 Reset facile** : Remettez le compteur à zéro d'un simple tap
+- **🎨 Design moderne** : Interface SwiftUI élégante et intuitive
+- **🌙 Mode sombre/clair** : Support automatique des thèmes système
+- **⚡ Performant** : Code optimisé, aucune latence
+- **📱 Universel** : Compatible iPhone et iPad
+
+## 📸 Captures d'écran
+
+<p align="center">
+  <img src="assets/screenshot1.png" width="300" alt="Interface principale">
+  <img src="assets/screenshot2.png" width="300" alt="Mode sombre">
+</p>
+
+## 🚀 Installation
+
+### Option 1: Installation directe (Recommandée)
+
+1. **Téléchargez l'IPA** : [JAPP.ipa](https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa)
+2. **Installez avec vos outils préférés** :
+   - **AltStore** : Ouvrez AltStore → Appuyez sur + → Sélectionnez JAPP.ipa
+   - **Sideloadly** : Glissez l'IPA dans Sideloadly et installez
+   - **AltServer Direct** : Utilisez AltServer pour l'installation directe
+
+### Option 2: Build depuis les sources
+
+```bash
+git clone https://github.com/Jefedi/iosapp-altstore.git
+cd iosapp-altstore
+open JAPP.xcodeproj
+```
+
+Puis buildez et installez via Xcode.
+
+### ⚠️ Configuration post-installation
+
+Après l'installation, allez dans :
+**Réglages → Général → Gestion des appareils → Faites confiance à "Apple Development"**
+
+## 🛠️ Configuration technique
+
+- **Platform** : iOS 17.0+
+- **Framework** : SwiftUI
+- **Architecture** : ARM64 (iPhone/iPad)
+- **Bundle ID** : `com.jefedi.japp`
+- **Taille** : ~2MB
+
+## 🔧 Développement
 
 ### Prérequis
-1. **AltStore** installé sur votre iPhone/iPad
-2. **Connexion Internet** active
 
-### Étapes d'installation
+- macOS Sonoma 14.0+
+- Xcode 15.0+
+- iOS 17.0+ SDK
+- Compte développeur Apple (pour signing)
 
-1. **Ouvrir AltStore** sur votre appareil iOS
-
-2. **Ajouter ma source** :
-   - Aller dans l'onglet **"Browse"**
-   - Toucher le **"+"** en haut à droite
-   - Entrer l'URL : `https://jefedi.github.io/iosapp-altstore/altstore-source.json`
-   - Confirmer l'ajout de la source
-
-3. **Installer l'app** :
-   - Aller dans **"Sources"** → **"Jefedi AltStore Source"**
-   - Toucher **"Jefedi AltStore App"** 
-   - Appuyer sur **"INSTALL"**
-   - Attendre le téléchargement et l'installation
-
-4. **Lancer l'app** :
-   - L'icône apparaît sur l'écran d'accueil
-   - Toucher pour ouvrir et utiliser le compteur !
-
-## 📱 Interface de l'App
+### Structure du projet
 
 ```
-┌─────────────────────┐
-│     COMPTEUR        │
-│                     │
-│        [42]         │
-│                     │
-│   [−]  [+]  [↻]     │
-│                     │
-└─────────────────────┘
+JAPP/
+├── JAPP/
+│   ├── JAPPApp.swift          # Point d'entrée de l'application
+│   ├── ContentView.swift      # Interface principale SwiftUI
+│   └── Assets.xcassets/       # Ressources (icônes, couleurs)
+├── .github/
+│   └── workflows/
+│       └── build.yml          # CI/CD avec GitHub Actions
+├── ExportOptions.plist        # Configuration export IPA
+├── manifest.json              # Manifeste AltStore
+└── index.html                 # Page de téléchargement
 ```
 
-## 🛠️ Développement Local
+### Build automatique
 
-### Compilation avec Xcode
-```bash
-# Ouvrir le projet
-open AltStoreApp.xcodeproj
-```
+Le projet utilise **GitHub Actions** pour automatiser les builds :
 
-### Compilation en ligne de commande (macOS)
-```bash
-./build.sh
-```
+- ✅ Build automatique sur chaque push
+- ✅ Export IPA avec signature automatique
+- ✅ Création de releases GitHub
+- ✅ Upload des artefacts
 
-### Compilation PowerShell (Windows)
-```powershell
-.\build.ps1
-```
+## 📦 Releases
 
-## 🔧 Architecture du Projet
+Toutes les releases sont disponibles sur [GitHub Releases](https://github.com/Jefedi/iosapp-altstore/releases).
 
-```
-iosapp-altstore/
-├── AltStoreApp.xcodeproj/     # Projet Xcode
-├── AltStoreApp/              # Code source SwiftUI
-│   ├── AltStoreAppApp.swift  # Point d'entrée @main
-│   └── ContentView.swift     # Interface utilisateur
-├── .github/workflows/        # CI/CD automatisé
-│   └── build.yml            # GitHub Actions
-├── docs/                    # GitHub Pages
-│   ├── index.html          # Page d'accueil
-│   └── altstore-source.json # Manifeste AltStore
-└── altstore-manifest.json   # Config installation
-```
+### Versions disponibles
 
-## 🌐 URLs Importantes
+- **v1.0** - Version initiale avec compteur de base
 
-- **🏠 Site web**: https://jefedi.github.io/iosapp-altstore/
-- **📥 Source AltStore**: `https://jefedi.github.io/iosapp-altstore/altstore-source.json`
-- **🔗 Repository GitHub**: https://github.com/Jefedi/iosapp-altstore
-- **📦 Releases**: https://github.com/Jefedi/iosapp-altstore/releases
+## 🤝 Contribution
 
-## 🤝 Support
+Les contributions sont bienvenues ! Pour contribuer :
 
-### Problèmes d'installation ?
+1. Forkez le projet
+2. Créez une branche pour votre feature (`git checkout -b feature/nouvelle-feature`)
+3. Committez vos changements (`git commit -m 'Ajout d'une nouvelle feature'`)
+4. Pushez vers la branche (`git push origin feature/nouvelle-feature`)
+5. Ouvrez une Pull Request
 
-1. **Vérifier AltStore** : Assurez-vous qu'AltStore est bien installé et fonctionnel
-2. **Connexion réseau** : L'installation nécessite Internet
-3. **URL correcte** : Vérifiez que vous utilisez la bonne URL de source
-4. **Réessayer** : Si ça échoue, fermez AltStore et relancez
+## 📋 Todo / Roadmap
 
-### Pour les développeurs
+- [ ] Sauvegarde de la valeur du compteur
+- [ ] Historique des comptages
+- [ ] Personnalisation des couleurs
+- [ ] Widget iOS
+- [ ] Support Apple Watch
 
-- **Issues GitHub** : https://github.com/Jefedi/iosapp-altstore/issues
-- **Discussions** : https://github.com/Jefedi/iosapp-altstore/discussions
+## 🐛 Signaler un bug
+
+Si vous trouvez un bug, veuillez [ouvrir une issue](https://github.com/Jefedi/iosapp-altstore/issues) avec :
+
+- Description du problème
+- Étapes pour reproduire
+- Version iOS
+- Captures d'écran si pertinentes
+
+## 📞 Support
+
+- **Documentation** : [GitHub Wiki](https://github.com/Jefedi/iosapp-altstore/wiki)
+- **Issues** : [GitHub Issues](https://github.com/Jefedi/iosapp-altstore/issues)
+- **Page web** : [jefedi.github.io/iosapp-altstore](https://jefedi.github.io/iosapp-altstore)
 
 ## 📄 Licence
 
-Ce projet est un exemple de démonstration créé à des fins éducatives.
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## 🙏 Remerciements
+
+- Apple pour SwiftUI et les outils de développement iOS
+- La communauté AltStore pour rendre le sideloading accessible
+- Tous les contributeurs et utilisateurs de JAPP
 
 ---
 
-**Made with ❤️ by Jefedi** 
+<p align="center">
+  <strong>Développé avec ❤️ par Jefedi</strong>
+</p>
 
-*Première app iOS distribuée via AltStore avec GitHub Actions !* 🎉
+<p align="center">
+  <a href="https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa">
+    🔽 Télécharger JAPP maintenant
+  </a>
+</p>

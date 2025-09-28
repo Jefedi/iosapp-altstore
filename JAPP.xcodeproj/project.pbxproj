@@ -7,22 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C1234567890123456789ABCD /* AltStoreAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1234567890123456789ABCE /* AltStoreAppApp.swift */; };
-		C1234567890123456789ABCF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1234567890123456789ABC0 /* ContentView.swift */; };
-		C1234567890123456789ABC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1234567890123456789ABC2 /* Assets.xcassets */; };
-		C1234567890123456789ABC3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1234567890123456789ABC4 /* Preview Assets.xcassets */; };
+		A12345671234567890123456 /* JAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345661234567890123456 /* JAPPApp.swift */; };
+		A12345691234567890123456 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345681234567890123456 /* ContentView.swift */; };
+		A1234556B1234567890123456 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234556A1234567890123456 /* Assets.xcassets */; };
+		A1234556E1234567890123456 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1234556D1234567890123456 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C1234567890123456789ABCB /* AltStoreApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AltStoreApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C1234567890123456789ABCE /* AltStoreAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltStoreAppApp.swift; sourceTree = "<group>"; };
-		C1234567890123456789ABC0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		C1234567890123456789ABC2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C1234567890123456789ABC4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A12345631234567890123456 /* JAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A12345661234567890123456 /* JAPPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JAPPApp.swift; sourceTree = "<group>"; };
+		A12345681234567890123456 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1234556A1234567890123456 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1234556D1234567890123456 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C1234567890123456789ABC8 /* Frameworks */ = {
+		A12345601234567890123456 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -32,37 +32,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C1234567890123456789ABC9 = {
+		A1234555A1234567890123456 = {
 			isa = PBXGroup;
 			children = (
-				C1234567890123456789ABCC /* AltStoreApp */,
-				C1234567890123456789ABCA /* Products */,
+				A12345651234567890123456 /* JAPP */,
+				A12345641234567890123456 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		C1234567890123456789ABCA /* Products */ = {
+		A12345641234567890123456 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C1234567890123456789ABCB /* AltStoreApp.app */,
+				A12345631234567890123456 /* JAPP.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C1234567890123456789ABCC /* AltStoreApp */ = {
+		A12345651234567890123456 /* JAPP */ = {
 			isa = PBXGroup;
 			children = (
-				C1234567890123456789ABCE /* AltStoreAppApp.swift */,
-				C1234567890123456789ABC0 /* ContentView.swift */,
-				C1234567890123456789ABC2 /* Assets.xcassets */,
-				C1234567890123456789ABC5 /* Preview Content */,
+				A12345661234567890123456 /* JAPPApp.swift */,
+				A12345681234567890123456 /* ContentView.swift */,
+				A1234556A1234567890123456 /* Assets.xcassets */,
+				A1234556C1234567890123456 /* Preview Content */,
 			);
-			path = AltStoreApp;
+			path = JAPP;
 			sourceTree = "<group>";
 		};
-		C1234567890123456789ABC5 /* Preview Content */ = {
+		A1234556C1234567890123456 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				C1234567890123456789ABC4 /* Preview Assets.xcassets */,
+				A1234556D1234567890123456 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -70,39 +70,39 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C1234567890123456789ABC7 /* AltStoreApp */ = {
+		A12345621234567890123456 /* JAPP */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C1234567890123456789ABC6 /* Build configuration list for PBXNativeTarget "AltStoreApp" */;
+			buildConfigurationList = A12345711234567890123456 /* Build configuration list for PBXNativeTarget "JAPP" */;
 			buildPhases = (
-				C1234567890123456789ABC8 /* Frameworks */,
-				C1234567890123456789ABCD /* Sources */,
-				C1234567890123456789ABCE /* Resources */,
+				A1234555F1234567890123456 /* Sources */,
+				A12345601234567890123456 /* Frameworks */,
+				A12345611234567890123456 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = AltStoreApp;
-			productName = AltStoreApp;
-			productReference = C1234567890123456789ABCB /* AltStoreApp.app */;
+			name = JAPP;
+			productName = JAPP;
+			productReference = A12345631234567890123456 /* JAPP.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		C1234567890123456789ABCF /* Project object */ = {
+		A1234555B1234567890123456 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					C1234567890123456789ABC7 = {
+					A12345621234567890123456 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
-			buildConfigurationList = C1234567890123456789ABC9 /* Build configuration list for PBXProject "AltStoreApp" */;
+			buildConfigurationList = A1234555E1234567890123456 /* Build configuration list for PBXProject "JAPP" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -110,42 +110,42 @@
 				en,
 				Base,
 			);
-			mainGroup = C1234567890123456789ABC9;
-			productRefGroup = C1234567890123456789ABCA /* Products */;
+			mainGroup = A1234555A1234567890123456;
+			productRefGroup = A12345641234567890123456 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C1234567890123456789ABC7 /* AltStoreApp */,
+				A12345621234567890123456 /* JAPP */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C1234567890123456789ABCE /* Resources */ = {
+		A12345611234567890123456 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1234567890123456789ABC3 /* Preview Assets.xcassets in Resources */,
-				C1234567890123456789ABC1 /* Assets.xcassets in Resources */,
+				A1234556E1234567890123456 /* Preview Assets.xcassets in Resources */,
+				A1234556B1234567890123456 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C1234567890123456789ABCD /* Sources */ = {
+		A1234555F1234567890123456 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1234567890123456789ABCF /* ContentView.swift in Sources */,
-				C1234567890123456789ABCD /* AltStoreAppApp.swift in Sources */,
+				A12345691234567890123456 /* ContentView.swift in Sources */,
+				A12345671234567890123456 /* JAPPApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		C1234567890123456789ABC4 /* Debug */ = {
+		A1234556F1234567890123456 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -208,7 +208,7 @@
 			};
 			name = Debug;
 		};
-		C1234567890123456789ABC5 /* Release */ = {
+		A12345701234567890123456 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -264,18 +264,16 @@
 			};
 			name = Release;
 		};
-		C1234567890123456789ABC6 /* Debug */ = {
+		A12345721234567890123456 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"AltStoreApp/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_ASSET_PATHS = "\"JAPP/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Jefedi AltStore App";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -286,7 +284,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jefedi.altstoreapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jefedi.japp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -294,18 +292,16 @@
 			};
 			name = Debug;
 		};
-		C1234567890123456789ABC7 /* Release */ = {
+		A12345731234567890123456 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"AltStoreApp/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_ASSET_PATHS = "\"JAPP/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Jefedi AltStore App";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -316,7 +312,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jefedi.altstoreapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jefedi.japp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -327,25 +323,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C1234567890123456789ABC9 /* Build configuration list for PBXProject "AltStoreApp" */ = {
+		A1234555E1234567890123456 /* Build configuration list for PBXProject "JAPP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C1234567890123456789ABC4 /* Debug */,
-				C1234567890123456789ABC5 /* Release */,
+				A1234556F1234567890123456 /* Debug */,
+				A12345701234567890123456 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C1234567890123456789ABC6 /* Build configuration list for PBXNativeTarget "AltStoreApp" */ = {
+		A12345711234567890123456 /* Build configuration list for PBXNativeTarget "JAPP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C1234567890123456789ABC6 /* Debug */,
-				C1234567890123456789ABC7 /* Release */,
+				A12345721234567890123456 /* Debug */,
+				A12345731234567890123456 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = C1234567890123456789ABCF /* Project object */;
+	rootObject = A1234555B1234567890123456 /* Project object */;
 }

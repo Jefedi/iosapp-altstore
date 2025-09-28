@@ -1,20 +1,17 @@
-name: Build iOS App for AltStore
+name: Build and Release JAPP
 
 on:
   push:
-    branches: [ main, develop ]
-    tags: [ 'v*' ]
+    branches: [ main ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
   workflow_dispatch:
 
-env:
-  PROJECT_NAME: AltStoreApp
-  SCHEME_NAME: AltStoreApp
-
 jobs:
   build:
-    name: Build and Export IPA
+    name: Build and Archive
     runs-on: macos-latest
     
     steps:
@@ -26,173 +23,106 @@ jobs:
       with:
         xcode-version: latest-stable
         
-    - name: Cache Xcode Build
-      uses: actions/cache@v4
+    - name: Install Apple Certificate
+      uses: apple-actions/import-codesign-certs@v2
       with:
-        path: |
-          ~/Library/Developer/Xcode/DerivedData
-          build
-        key: ${{ runner.os }}-xcode-${{ hashFiles('**/*.xcodeproj') }}
-        restore-keys: |
-          ${{ runner.os }}-xcode-
-          
-    - name: Create build directory
-      run: mkdir -p build
-          
-    - name: Install Dependencies
-      run: |
-        # Si vous avez des dépendances CocoaPods ou SPM
-        # pod install --repo-update
-        echo "No dependencies to install"
-        
-    - name: Debug Project Structure  
-      run: |
-        echo "=== Current Directory ==="
-        pwd
-        echo "=== List all files ==="
-        ls -la
-        echo "=== Xcode Project Contents ==="
-        if [ -d "${{ env.PROJECT_NAME }}.xcodeproj" ]; then
-          ls -la ${{ env.PROJECT_NAME }}.xcodeproj/
-          echo "=== Shared Data ==="
-          if [ -d "${{ env.PROJECT_NAME }}.xcodeproj/xcshareddata" ]; then
-            ls -la ${{ env.PROJECT_NAME }}.xcodeproj/xcshareddata/
-          fi
-          echo "=== Schemes ==="
-          if [ -d "${{ env.PROJECT_NAME }}.xcodeproj/xcshareddata/xcschemes" ]; then
-            ls -la ${{ env.PROJECT_NAME }}.xcodeproj/xcshareddata/xcschemes/
-          fi
-        else
-          echo "❌ Xcode project not found!"
-          exit 1
-        fi
-        echo "=== Verify Scheme ==="
-        set +e  # Désactiver l'arrêt en cas d'erreur
-        xcodebuild -project ${{ env.PROJECT_NAME }}.xcodeproj -list
-        if [ $? -ne 0 ]; then
-          echo "⚠️ xcodebuild -list failed, but continuing..."
-        fi
-        set -e  # Réactiver l'arrêt en cas d'erreur
-        
+        p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+        p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+      continue-on-error: true
+      
+    - name: Install Provisioning Profile
+      uses: apple-actions/download-provisioning-profiles@v1
+      with:
+        bundle-id: com.jefedi.japp
+        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+        api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
+        api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      continue-on-error: true
+      
     - name: Build Archive
       run: |
-        set -e
-        echo "Building archive for ${{ env.PROJECT_NAME }}..."
-        
-        # Vérifier si le projet peut être listé
-        if xcodebuild -project ${{ env.PROJECT_NAME }}.xcodeproj -list >/dev/null 2>&1; then
-          echo "✅ Project is valid, building normally..."
-          xcodebuild -project ${{ env.PROJECT_NAME }}.xcodeproj \
-                     -scheme ${{ env.SCHEME_NAME }} \
-                     -configuration Release \
-                     -archivePath build/${{ env.PROJECT_NAME }}.xcarchive \
-                     -destination "generic/platform=iOS" \
-                     DEVELOPMENT_TEAM="" \
-                     CODE_SIGN_IDENTITY="" \
-                     CODE_SIGNING_REQUIRED=NO \
-                     CODE_SIGNING_ALLOWED=NO \
-                     archive
-        else
-          echo "❌ Project validation failed"
-          echo "Creating a demo IPA structure for testing..."
-          
-          # Créer structure IPA de démonstration
-          mkdir -p build/Payload/AltStoreApp.app
-          echo "Demo executable" > build/Payload/AltStoreApp.app/AltStoreApp
-          chmod +x build/Payload/AltStoreApp.app/AltStoreApp
-          
-          # Info.plist basique  
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > build/Payload/AltStoreApp.app/Info.plist
-          echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '<plist version="1.0"><dict>' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '<key>CFBundleExecutable</key><string>AltStoreApp</string>' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '<key>CFBundleIdentifier</key><string>com.jefedi.altstoreapp</string>' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '<key>CFBundleName</key><string>Jefedi AltStore App</string>' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '<key>CFBundleVersion</key><string>1.0</string>' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '<key>MinimumOSVersion</key><string>17.0</string>' >> build/Payload/AltStoreApp.app/Info.plist
-          echo '</dict></plist>' >> build/Payload/AltStoreApp.app/Info.plist
-          
-          # Créer l'IPA
-          cd build && zip -r AltStoreApp.ipa Payload/ && cd ..
-          echo "✅ Demo IPA created successfully"
-        fi
+        set -eo pipefail
+        xcodebuild -project JAPP.xcodeproj \
+                   -scheme JAPP \
+                   -destination generic/platform=iOS \
+                   -archivePath $PWD/build/JAPP.xcarchive \
+                   archive | xcpretty
                    
-    - name: Export IPA
+    - name: Export IPA (Ad-Hoc)
       run: |
-        set -e
-        echo "Exporting IPA..."
-        
-        # Vérifier s'il y a une archive Xcode à exporter
-        if [ -d "build/${{ env.PROJECT_NAME }}.xcarchive" ]; then
-          echo "Found Xcode archive, exporting properly..."
-          xcodebuild -exportArchive \
-                     -archivePath build/${{ env.PROJECT_NAME }}.xcarchive \
-                     -exportPath build/ \
-                     -exportOptionsPlist ExportOptions.plist
-        else
-          echo "No Xcode archive found, assuming demo IPA was already created"
-        fi
+        set -eo pipefail
+        xcodebuild -exportArchive \
+                   -archivePath $PWD/build/JAPP.xcarchive \
+                   -exportOptionsPlist ExportOptions.plist \
+                   -exportPath $PWD/build \
+                   -allowProvisioningUpdates
                    
-    - name: Verify IPA
+    - name: Export IPA (Development - Fallback)
+      if: failure()
       run: |
-        IPA_PATH="build/${{ env.PROJECT_NAME }}.ipa"
-        if [ -f "$IPA_PATH" ]; then
-          echo "✅ IPA created successfully"
-          ls -la "$IPA_PATH"
-          echo "📊 IPA Size: $(du -h "$IPA_PATH" | cut -f1)"
-        else
-          echo "❌ IPA not found"
-          ls -la build/
-          exit 1
-        fi
+        set -eo pipefail
+        xcodebuild -exportArchive \
+                   -archivePath $PWD/build/JAPP.xcarchive \
+                   -exportOptionsPlist ExportOptionsDev.plist \
+                   -exportPath $PWD/build \
+                   -allowProvisioningUpdates
+      continue-on-error: true
+                   
+    - name: Create Release Directory
+      run: |
+        mkdir -p release
+        find build -name "*.ipa" -exec cp {} release/JAPP.ipa \;
         
-    - name: Upload IPA Artifact
-      uses: actions/upload-artifact@v4
+    - name: Generate App Info
+      run: |
+        echo "Build Date: $(date)" > release/build_info.txt
+        echo "Commit: ${{ github.sha }}" >> release/build_info.txt
+        echo "Branch: ${{ github.ref }}" >> release/build_info.txt
+        
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.PROJECT_NAME }}-${{ github.sha }}
-        path: build/${{ env.PROJECT_NAME }}.ipa
-        retention-days: 30
-        
-    - name: Upload to Release (Tags only)
+        name: JAPP-${{ github.run_number }}
+        path: |
+          release/
+          build/*.xcarchive
+          
+    - name: Create Release
       if: startsWith(github.ref, 'refs/tags/v')
-      uses: softprops/action-gh-release@v2
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        files: |
-          build/${{ env.PROJECT_NAME }}.ipa
-          altstore-source.json
+        tag_name: ${{ github.ref }}
+        release_name: JAPP ${{ github.ref }}
+        body: |
+          ## 📱 JAPP - Compteur Simple
+          
+          **Installation:**
+          1. Téléchargez le fichier `JAPP.ipa`
+          2. Installez avec AltStore, Sideloadly, ou AltServer
+          3. Faites confiance au développeur dans Réglages → Général → Gestion des appareils
+          
+          **Fonctionnalités:**
+          - ➕ Compteur avec boutons + et -
+          - 🔄 Bouton Reset
+          - 🎨 Interface moderne SwiftUI
+          - 🌙 Support mode sombre/clair
+          
+          **Configuration:**
+          - iOS 17.0+ requis
+          - Bundle ID: com.jefedi.japp
+          - Version: ${{ github.ref_name }}
         draft: false
         prerelease: false
-        generate_release_notes: true
         
-    - name: Update Manifest
+    - name: Upload Release Asset
       if: startsWith(github.ref, 'refs/tags/v')
-      run: |
-        # Mettre à jour les URLs dans le manifeste avec les vraies URLs de release
-        TAG_NAME=${GITHUB_REF#refs/tags/}
-        RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/${{ env.PROJECT_NAME }}.ipa"
-        
-        echo "Updating manifest with release URL: $RELEASE_URL"
-        
-        # Remplacer l'URL dans le manifeste avec l'URL actuelle de GitHub
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-          sed -i '' "s|https://github.com/Jefedi/iosapp-altstore/releases/download/v1.0.0/AltStoreApp.ipa|$RELEASE_URL|g" altstore-source.json
-          sed -i '' "s|https://github.com/Jefedi/iosapp-altstore/releases/download/v1.0.0/AltStoreApp.ipa|$RELEASE_URL|g" altstore-manifest.json
-        else
-          sed -i "s|https://github.com/Jefedi/iosapp-altstore/releases/download/v1.0.0/AltStoreApp.ipa|$RELEASE_URL|g" altstore-source.json
-          sed -i "s|https://github.com/Jefedi/iosapp-altstore/releases/download/v1.0.0/AltStoreApp.ipa|$RELEASE_URL|g" altstore-manifest.json
-        fi
-        
-        echo "✅ Manifest updated with release URL: $RELEASE_URL"
-        
-    - name: Build Summary
-      if: always()
-      run: |
-        echo "## Build Summary 📱" >> $GITHUB_STEP_SUMMARY
-        echo "- **Project**: ${{ env.PROJECT_NAME }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Scheme**: ${{ env.SCHEME_NAME }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Configuration**: Release" >> $GITHUB_STEP_SUMMARY
-        if [ -f "build/${{ env.PROJECT_NAME }}.ipa" ]; then
-          IPA_SIZE=$(du -h "build/${{ env.PROJECT_NAME }}.ipa" | cut -f1)
-          echo "- **IPA Size**: $IPA_SIZE" >> $GITHUB_STEP_SUMMARY
-        fi
-        echo "- **Runner**: ${{ runner.os }} (${{ runner.arch }})" >> $GITHUB_STEP_SUMMARY
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: release/JAPP.ipa
+        asset_name: JAPP.ipa
+        asset_content_type: application/octet-stream

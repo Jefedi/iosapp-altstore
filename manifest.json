@@ -1,0 +1,32 @@
+{
+  "name": "JAPP",
+  "bundleIdentifier": "com.jefedi.japp",
+  "developerName": "Jefedi",
+  "subtitle": "Compteur Simple et Élégant",
+  "version": "1.0",
+  "versionDate": "2025-09-28T00:00:00Z",
+  "versionDescription": "Version initiale de JAPP avec compteur interactif",
+  "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa",
+  "localizedDescription": "JAPP est une application de compteur simple et élégante avec une interface moderne SwiftUI.\n\n✨ Fonctionnalités:\n• Compteur avec boutons + et -\n• Bouton Reset pour remettre à zéro\n• Interface moderne avec animations fluides\n• Support mode sombre et clair\n• Design minimaliste et intuitif\n\n🎯 Parfait pour:\n• Compter n'importe quoi\n• Interface simple et rapide\n• Utilisation quotidienne\n\n📱 Compatible iOS 17.0+",
+  "iconURL": "https://github.com/Jefedi/iosapp-altstore/raw/main/assets/icon.png",
+  "tintColor": "#007AFF",
+  "size": 2048000,
+  "screenshotURLs": [
+    "https://github.com/Jefedi/iosapp-altstore/raw/main/assets/screenshot1.png",
+    "https://github.com/Jefedi/iosapp-altstore/raw/main/assets/screenshot2.png"
+  ],
+  "permissions": [
+    {
+      "type": "background-fetch",
+      "usageDescription": "Pas de permissions spéciales requises."
+    }
+  ],
+  "appPermissions": {
+    "entitlements": [
+      {
+        "name": "com.apple.security.app-sandbox"
+      }
+    ],
+    "privacy": {}
+  }
+}

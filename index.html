@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAPP - Compteur Simple pour iOS</title>
+    <meta name="description" content="Téléchargez JAPP - Une application de compteur simple et élégante pour iOS. Installation directe via AltStore ou Sideloadly.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="JAPP - Compteur Simple pour iOS">
+    <meta property="og:description" content="Application de compteur élégante avec interface SwiftUI moderne">
+    <meta property="og:image" content="https://github.com/Jefedi/iosapp-altstore/raw/main/assets/icon.png">
+    <meta property="og:url" content="https://jefedi.github.io/iosapp-altstore">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+        }
+        
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .download-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+        }
+        
+        .secondary-btn {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        
+        .feature {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .feature h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .installation-steps {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        
+        .steps {
+            display: grid;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content h4 {
+            margin-bottom: 8px;
+            color: #007AFF;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                padding: 40px 0;
+            }
+            
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .download-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="app-icon">J</div>
+            <h1>JAPP</h1>
+            <p class="subtitle">Compteur Simple et Élégant pour iOS</p>
+        </div>
+        
+        <div class="download-section">
+            <h2 style="text-align: center; margin-bottom: 20px;">📱 Télécharger JAPP</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                Version 1.0 - Compatible iOS 17.0+
+            </p>
+            
+            <div class="download-buttons">
+                <a href="https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa" 
+                   class="download-btn primary-btn" download>
+                    📥 Télécharger JAPP.ipa
+                </a>
+                <a href="manifest.json" class="download-btn secondary-btn">
+                    📄 Manifeste JSON
+                </a>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Installation rapide :</strong> Téléchargez le fichier IPA et installez-le avec AltStore, Sideloadly, ou AltServer Direct.
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">➕</div>
+                <h3>Compteur Interactif</h3>
+                <p>Boutons + et - avec animations fluides et feedback visuel immédiat</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h3>Reset Facile</h3>
+                <p>Remettez le compteur à zéro d'un simple tap avec le bouton Reset</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Design Moderne</h3>
+                <p>Interface SwiftUI élégante avec support du mode sombre et clair</p>
+            </div>
+        </div>
+        
+        <div class="installation-steps">
+            <h2>🚀 Guide d'Installation</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Télécharger l'IPA</h4>
+                        <p>Cliquez sur le bouton "Télécharger JAPP.ipa" ci-dessus pour obtenir le fichier d'installation.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Choisir votre méthode d'installation</h4>
+                        <p><strong>AltStore :</strong> Ouvrez AltStore → + → Sélectionnez JAPP.ipa<br>
+                        <strong>Sideloadly :</strong> Glissez l'IPA dans Sideloadly et installez<br>
+                        <strong>AltServer Direct :</strong> Utilisez AltServer pour l'installation directe</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Faire confiance au développeur</h4>
+                        <p>Allez dans Réglages → Général → Gestion des appareils → Faites confiance à "Apple Development"</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Profiter de JAPP !</h4>
+                        <p>L'application est maintenant installée et prête à l'emploi sur votre écran d'accueil.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <strong>⚠️ Important :</strong> Les applications sideloadées doivent être resignées tous les 7 jours (compte Apple gratuit) ou 1 an (compte développeur). AltStore peut automatiser ce processus.
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>JAPP v1.0 - Développé par Jefedi</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/Jefedi/iosapp-altstore" style="color: rgba(255,255,255,0.8);">
+                    📖 Code source sur GitHub
+                </a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Animation au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observer tous les éléments animables
+        document.querySelectorAll('.feature, .step, .download-section, .installation-steps').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+        
+        // Tracking des téléchargements
+        document.querySelectorAll('a[download], a[href$=".ipa"]').forEach(link => {
+            link.addEventListener('click', () => {
+                console.log('Téléchargement JAPP initié');
+                // Ici vous pourriez ajouter Google Analytics ou autre
+            });
+        });
+    </script>
+</body>
+</html>
