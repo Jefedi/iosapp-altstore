@@ -26,7 +26,7 @@
                     "date": "2025-09-28",
                     "buildVersion": "1",
                     "localizedDescription": "Version initiale:\n• Interface SwiftUI moderne\n• Compteur interactif avec boutons +, -, Reset\n• Support iOS 17+",
-                    "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/latest/download/AltStoreApp.ipa",
+                    "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/download/v1.0.0/AltStoreApp.ipa",
                     "size": 2000000,
                     "minOSVersion": "17.0"
                 }
