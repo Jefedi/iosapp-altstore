@@ -1,0 +1,32 @@
+{
+    "name": "Jefedi AltStore Source",
+    "identifier": "com.jefedi.altstore.source", 
+    "sourceURL": "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/altstore-source-temp.json",
+    "apps": [
+        {
+            "name": "Jefedi AltStore App",
+            "bundleIdentifier": "com.jefedi.altstoreapp",
+            "developerName": "Jefedi",
+            "subtitle": "Une app de demonstration by Jefedi",
+            "version": "1.0",
+            "versionDate": "2025-09-28T10:00:00-07:00",
+            "versionDescription": "Version initiale avec compteur interactif creee par Jefedi",
+            "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/latest/download/AltStoreApp.ipa",
+            "localizedDescription": "Cette application iOS a ete creee par Jefedi specialement pour etre distribuee via AltStore. Elle inclut: Interface utilisateur moderne en SwiftUI, Compteur interactif avec boutons +/- et reset, Design adaptatif pour iPhone et iPad, Compatibilite iOS 17+, Code source complet inclus.",
+            "iconURL": "https://github.com/Jefedi/iosapp-altstore/raw/main/icon.png",
+            "tintColor": "007AFF",
+            "size": 5242880,
+            "beta": false,
+            "screenshotURLs": [],
+            "permissions": [],
+            "appPermissions": {
+                "entitlements": []
+            }
+        }
+    ],
+    "news": [],
+    "userInfo": {
+        "githubURL": "https://github.com/Jefedi",
+        "websiteURL": "https://github.com/Jefedi/iosapp-altstore"
+    }
+}
