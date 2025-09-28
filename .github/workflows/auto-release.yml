@@ -1,5 +1,12 @@
 name: 🚀 Auto Release & Deploy
 
+# Permissions required for the workflow
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
 on:
   push:
     branches: [ main ]
@@ -234,6 +241,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [detect-version, build-ios]
     if: always() && needs.detect-version.outputs.build-needed == 'true' && needs.build-ios.result == 'success'
+    permissions:
+      contents: write
+      actions: read
 
     steps:
     - name: 📥 Checkout Code
@@ -379,6 +389,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [detect-version, create-release]
     if: always() && needs.create-release.result == 'success'
+    permissions:
+      contents: write
+      actions: read
 
     steps:
     - name: 📥 Checkout Code

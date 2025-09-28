@@ -1,5 +1,12 @@
 name: 🚀 Deploy JAPP v1.0.6
 
+# Permissions required for the workflow
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
 on:
   workflow_dispatch:
     inputs:
