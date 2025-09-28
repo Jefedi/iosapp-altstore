@@ -120,13 +120,39 @@ Vous verrez :
 - Vérifiez que `config.json` a été modifié
 - Assurez-vous d'avoir pushé vers la branche `main`
 
-### Build échoue
-- Vérifiez que le projet Xcode compile localement
-- Consultez les logs dans GitHub Actions
+### Build échoue - Problème Xcode
+- Le workflow utilise maintenant `latest-stable` Xcode
+- En cas d'échec, regardez les logs dans GitHub Actions
+- Testez avec le workflow "Test Build" (manual trigger)
+
+### Erreur "Could not find Xcode version"
+- ✅ **Corrigé** : Le workflow utilise maintenant la dernière version stable
+- Si le problème persiste, vérifiez les logs du job `build-ios`
+
+### Build échoue - Problèmes de signing
+- L'app est configurée pour build sans signing (CODE_SIGNING_REQUIRED=NO)
+- Vérifiez que le projet Xcode compile localement d'abord
+
+### IPA non créé
+- Le workflow essaie plusieurs méthodes de création d'IPA
+- En cas d'échec, il crée l'IPA manuellement depuis le .app
+- Vérifiez les logs du step "Find IPA File"
+
+### Test de Build Manuel
+Pour tester uniquement le build sans release :
+1. Allez sur GitHub Actions
+2. Cliquez sur "Test Build" 
+3. Cliquez "Run workflow"
+4. Regardez les logs détaillés pour identifier les problèmes
 
 ### Release existe déjà
 - GitHub Actions skip automatiquement si la version existe
 - Changez la version dans `config.json` pour une nouvelle
+
+### Logs utiles
+- **Actions** : https://github.com/Jefedi/iosapp-altstore/actions
+- **Build logs** : Cliquez sur le workflow échoué → job "build-ios"
+- **Artifacts** : Les IPA de test sont sauvegardés pendant 7 jours
 
 ---
 

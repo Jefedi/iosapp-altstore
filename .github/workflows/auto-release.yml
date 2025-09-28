@@ -77,7 +77,14 @@ jobs:
     - name: 🍎 Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '15.0'
+        xcode-version: 'latest-stable'
+
+    - name: 🔍 Show Available Xcode Versions
+      run: |
+        echo "Available Xcode versions:"
+        ls /Applications/ | grep Xcode
+        xcode-select -p
+        xcodebuild -version
 
     - name: 📖 Load Configuration
       id: config
@@ -94,47 +101,66 @@ jobs:
       run: |
         VERSION="${{ steps.config.outputs.version }}"
         
+        # Install xcpretty for better build output
+        gem install xcpretty
+        
         # Update MARKETING_VERSION in project.pbxproj
         sed -i '' "s/MARKETING_VERSION = [^;]*/MARKETING_VERSION = $VERSION/g" JAPP.xcodeproj/project.pbxproj
         
         echo "✅ Updated Xcode project to version $VERSION"
+        
+        # Show current project settings
+        echo "Current project configuration:"
+        grep -A 5 -B 5 "MARKETING_VERSION" JAPP.xcodeproj/project.pbxproj
 
     - name: 📦 Build Archive
       run: |
+        echo "Building JAPP version ${{ steps.config.outputs.version }}"
+        echo "Bundle ID: ${{ steps.config.outputs.bundle-id }}"
+        
+        # Create build directory
+        mkdir -p build
+        
+        # Build with more permissive settings for GitHub Actions
+        set -o pipefail
         xcodebuild -project JAPP.xcodeproj \
           -scheme JAPP \
           -configuration Release \
           -archivePath build/JAPP.xcarchive \
           -sdk iphoneos \
+          -destination generic/platform=iOS \
           -allowProvisioningUpdates \
+          DEVELOPMENT_TEAM="" \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGN_ENTITLEMENTS="" \
           CODE_SIGNING_ALLOWED=NO \
-          archive
+          PROVISIONING_PROFILE_SPECIFIER="" \
+          archive | xcpretty
 
-    - name: 📱 Export IPA
+    - name: 📱 Export IPA  
       run: |
-        # Create export options plist
-        cat > export_options.plist << EOF
+        echo "Exporting IPA..."
+        
+        # Create a more permissive export options plist
+        cat > ExportOptions.plist << EOF
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
         <dict>
             <key>method</key>
-            <string>development</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>stripSwiftSymbols</key>
-            <true/>
+            <string>ad-hoc</string>
+            <key>teamID</key>
+            <string></string>
             <key>compileBitcode</key>
             <false/>
-            <key>destination</key>
-            <string>export</string>
-            <key>generateAppStoreInformation</key>
-            <false/>
-            <key>installerSigningCertificate</key>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>signingCertificate</key>
             <string>-</string>
+            <key>provisioningProfiles</key>
+            <dict/>
         </dict>
         </plist>
         EOF
@@ -142,26 +168,62 @@ jobs:
         xcodebuild -exportArchive \
           -archivePath build/JAPP.xcarchive \
           -exportPath build/ \
-          -exportOptionsPlist export_options.plist \
-          -allowProvisioningUpdates
+          -exportOptionsPlist ExportOptions.plist \
+          -allowProvisioningUpdates | xcpretty || {
+            echo "Export failed, trying alternative method..."
+            
+            # Alternative: try to extract IPA manually from archive
+            cd build/JAPP.xcarchive/Products/Applications/
+            zip -r ../../../JAPP.ipa JAPP.app/
+            cd ../../../
+          }
 
     - name: 🔍 Find IPA File
       id: find-ipa
       run: |
-        IPA_PATH=$(find build -name "*.ipa" | head -1)
-        if [ -z "$IPA_PATH" ]; then
-          echo "❌ No IPA file found"
-          exit 1
+        echo "Searching for IPA files in build directory..."
+        find build -name "*.ipa" -ls || true
+        
+        # Try multiple possible locations
+        IPA_PATH=""
+        if [ -f "build/JAPP.ipa" ]; then
+          IPA_PATH="build/JAPP.ipa"
+        elif [ -f "build/Apps/JAPP.ipa" ]; then
+          IPA_PATH="build/Apps/JAPP.ipa"
+        else
+          IPA_PATH=$(find build -name "*.ipa" -type f | head -1)
+        fi
+        
+        if [ -z "$IPA_PATH" ] || [ ! -f "$IPA_PATH" ]; then
+          echo "❌ No IPA file found, checking build directory structure:"
+          find build -type f -name "*.app" -o -name "*.ipa" || true
+          ls -la build/ || true
+          
+          # Try to find .app and create IPA manually
+          APP_PATH=$(find build -name "JAPP.app" -type d | head -1)
+          if [ -n "$APP_PATH" ] && [ -d "$APP_PATH" ]; then
+            echo "Found .app bundle, creating IPA manually..."
+            mkdir -p build/Payload
+            cp -r "$APP_PATH" build/Payload/
+            cd build
+            zip -r JAPP.ipa Payload/
+            cd ..
+            IPA_PATH="build/JAPP.ipa"
+          else
+            echo "❌ No .app bundle found either"
+            exit 1
+          fi
         fi
         
         echo "ipa-path=$IPA_PATH" >> $GITHUB_OUTPUT
         echo "ipa-name=$(basename $IPA_PATH)" >> $GITHUB_OUTPUT
         
         # Get file size
-        SIZE=$(stat -f%z "$IPA_PATH")
+        SIZE=$(stat -f%z "$IPA_PATH" 2>/dev/null || stat -c%s "$IPA_PATH" 2>/dev/null || echo "0")
         echo "ipa-size=$SIZE" >> $GITHUB_OUTPUT
         
-        echo "✅ Found IPA: $IPA_PATH ($(( SIZE / 1024 / 1024 )) MB)"
+        SIZE_MB=$(( SIZE / 1024 / 1024 ))
+        echo "✅ Found IPA: $IPA_PATH (${SIZE_MB} MB)"
 
     - name: 📤 Upload IPA Artifact
       uses: actions/upload-artifact@v4

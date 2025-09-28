@@ -1,0 +1,138 @@
+name: 🧪 Test Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        default: 'true'
+
+jobs:
+  test-build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🍎 Setup Xcode (Latest)
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 'latest-stable'
+
+    - name: 🔍 Debug Environment
+      run: |
+        echo "=== System Info ==="
+        sw_vers
+        
+        echo -e "\n=== Xcode Info ==="
+        xcode-select -p
+        xcodebuild -version
+        
+        echo -e "\n=== Available Xcode Versions ==="
+        ls /Applications/ | grep -i xcode
+        
+        echo -e "\n=== Available SDKs ==="
+        xcodebuild -showsdks
+        
+        echo -e "\n=== Project Info ==="
+        xcodebuild -project JAPP.xcodeproj -list
+
+    - name: 📖 Load Configuration
+      id: config
+      run: |
+        VERSION=$(cat config.json | jq -r '.app.version')
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $VERSION"
+
+    - name: 🔧 Update Project Version
+      run: |
+        VERSION="${{ steps.config.outputs.version }}"
+        echo "Updating to version: $VERSION"
+        
+        # Show current version in project
+        echo "Current MARKETING_VERSION in project:"
+        grep "MARKETING_VERSION" JAPP.xcodeproj/project.pbxproj | head -2
+        
+        # Update version
+        sed -i '' "s/MARKETING_VERSION = [^;]*/MARKETING_VERSION = $VERSION/g" JAPP.xcodeproj/project.pbxproj
+        
+        # Verify update
+        echo "Updated MARKETING_VERSION in project:"
+        grep "MARKETING_VERSION" JAPP.xcodeproj/project.pbxproj | head -2
+
+    - name: 🧪 Test Build (Archive Only)
+      run: |
+        echo "Testing build with minimal settings..."
+        
+        # Install xcpretty for better output
+        gem install xcpretty
+        
+        # Create build directory
+        mkdir -p build
+        
+        # Try a simple build first
+        xcodebuild -project JAPP.xcodeproj \
+          -scheme JAPP \
+          -configuration Release \
+          -sdk iphoneos \
+          -destination generic/platform=iOS \
+          clean build \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO | xcpretty
+        
+        echo "✅ Basic build successful!"
+
+    - name: 📦 Test Archive
+      run: |
+        echo "Testing archive creation..."
+        
+        xcodebuild -project JAPP.xcodeproj \
+          -scheme JAPP \
+          -configuration Release \
+          -archivePath build/JAPP.xcarchive \
+          -sdk iphoneos \
+          -destination generic/platform=iOS \
+          -allowProvisioningUpdates \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          archive | xcpretty
+        
+        # Check archive contents
+        echo "Archive contents:"
+        ls -la build/JAPP.xcarchive/
+        ls -la build/JAPP.xcarchive/Products/Applications/ || true
+
+    - name: 🔍 Manual IPA Creation
+      run: |
+        echo "Creating IPA manually from archive..."
+        
+        cd build/JAPP.xcarchive/Products/Applications/
+        if [ -d "JAPP.app" ]; then
+          echo "Found JAPP.app, creating IPA..."
+          mkdir -p ../../../Payload
+          cp -r JAPP.app ../../../Payload/
+          cd ../../../
+          zip -r JAPP.ipa Payload/
+          
+          echo "✅ IPA created successfully!"
+          ls -la JAPP.ipa
+          
+          # Get file info
+          SIZE=$(stat -c%s "JAPP.ipa" 2>/dev/null || stat -f%z "JAPP.ipa" 2>/dev/null)
+          SIZE_MB=$(( SIZE / 1024 / 1024 ))
+          echo "IPA size: ${SIZE_MB} MB"
+        else
+          echo "❌ JAPP.app not found in archive"
+          echo "Available files:"
+          ls -la
+        fi
+
+    - name: 📤 Upload Test IPA
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: JAPP-test-build
+        path: build/JAPP.ipa
+        retention-days: 7
