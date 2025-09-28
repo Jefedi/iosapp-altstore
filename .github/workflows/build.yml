@@ -80,7 +80,7 @@ jobs:
         echo "Branch: ${{ github.ref }}" >> release/build_info.txt
         
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: JAPP-${{ github.run_number }}
         path: |
@@ -89,12 +89,11 @@ jobs:
           
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/v')
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: JAPP ${{ github.ref }}
+        name: JAPP ${{ github.ref_name }}
         body: |
           ## 📱 JAPP - Compteur Simple
           
@@ -113,16 +112,7 @@ jobs:
           - iOS 17.0+ requis
           - Bundle ID: com.jefedi.japp
           - Version: ${{ github.ref_name }}
+        files: |
+          release/JAPP.ipa
         draft: false
         prerelease: false
-        
-    - name: Upload Release Asset
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: release/JAPP.ipa
-        asset_name: JAPP.ipa
-        asset_content_type: application/octet-stream
