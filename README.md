@@ -36,7 +36,15 @@
 
 ## 🚀 Installation
 
-### Option 1: Installation directe (Recommandée)
+### Option 1: Via AltStore Source (Recommandée)
+
+1. **Ajoutez la source JAPP dans AltStore** :
+   ```
+   https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/altstore-source.json
+   ```
+2. **Dans AltStore** : Allez dans l'onglet "Browse" → Trouvez "JAPP" → Installez
+
+### Option 2: Installation directe
 
 1. **Téléchargez l'IPA** : [JAPP.ipa](https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa)
 2. **Installez avec vos outils préférés** :

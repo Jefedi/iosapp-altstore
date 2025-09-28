@@ -1,0 +1,50 @@
+{
+  "name": "JAPP Store",
+  "identifier": "com.jefedi.japp.source",
+  "sourceURL": "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/altstore-source.json",
+  "apps": [
+    {
+      "name": "JAPP",
+      "bundleIdentifier": "com.jefedi.japp",
+      "developerName": "Jefedi",
+      "subtitle": "Compteur Simple et Élégant",
+      "version": "1.0.4",
+      "versionDate": "2025-09-28T21:00:00Z",
+      "versionDescription": "• Compteur interactif avec boutons + et -\n• Bouton Reset pour remettre à zéro\n• Interface SwiftUI moderne avec animations\n• Support mode sombre et clair\n• Compatible iOS 17.0+",
+      "downloadURL": "https://github.com/Jefedi/iosapp-altstore/releases/latest/download/JAPP.ipa",
+      "localizedDescription": "JAPP est une application de compteur simple et élégante avec une interface moderne SwiftUI.\n\n✨ Fonctionnalités principales :\n• Compteur avec boutons + et - intuitifs\n• Bouton Reset pour remettre à zéro\n• Interface moderne avec animations fluides\n• Support automatique du mode sombre et clair\n• Design minimaliste et épuré\n• Compatible iPhone et iPad\n\n🎯 Parfait pour :\n• Compter n'importe quoi au quotidien\n• Interface simple et rapide à utiliser\n• Utilisation fréquente sans complexité\n\n📱 Caractéristiques techniques :\n• Compatible iOS 17.0 et plus récent\n• Taille optimisée (~2MB)\n• Aucune permission spéciale requise\n• Interface SwiftUI native\n• Performance optimale sur tous les appareils\n\nUne application utile pour tous vos besoins de comptage quotidien !",
+      "iconURL": "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/assets/icon-1024.png",
+      "tintColor": "#007AFF",
+      "size": 2097152,
+      "beta": false,
+      "screenshots": [
+        "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/assets/screenshot1.png",
+        "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/assets/screenshot2.png",
+        "https://raw.githubusercontent.com/Jefedi/iosapp-altstore/main/assets/screenshot3.png"
+      ],
+      "permissions": [
+        {
+          "type": "none",
+          "usageDescription": "JAPP ne nécessite aucune permission spéciale pour fonctionner."
+        }
+      ],
+      "appPermissions": {}
+    }
+  ],
+  "news": [
+    {
+      "title": "JAPP v1.0.4 Disponible !",
+      "identifier": "japp-v1.0.4-release",
+      "caption": "Compteur simple et élégant maintenant disponible",
+      "tintColor": "#007AFF",
+      "date": "2025-09-28T21:00:00Z",
+      "notify": false,
+      "url": "https://github.com/Jefedi/iosapp-altstore/releases/tag/v1.0.4"
+    }
+  ],
+  "userInfo": {
+    "patreonURL": "https://github.com/Jefedi/iosapp-altstore",
+    "discordURL": "",
+    "twitterURL": ""
+  }
+}
